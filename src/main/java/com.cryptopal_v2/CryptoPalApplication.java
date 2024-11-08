@@ -1,3 +1,5 @@
+package com.cryptopal_v2;
+
 import org.springframework.boot.SpringApplication;
 
 public class CryptoPalApplication {
