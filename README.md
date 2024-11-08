@@ -1,6 +1,7 @@
 # CryptoPal-V2
 A refined version of the original CryptoPal prototype with full functionality. 
-Implememts the following functionality: 
+
+Implements the following functionality: 
 
 Project Timeline --> 2 months
 
