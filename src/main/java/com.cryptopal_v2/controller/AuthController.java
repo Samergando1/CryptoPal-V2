@@ -35,17 +35,18 @@ public class AuthController{
      * @param firebaseIdToken
      * @return
      */
-    @PostMapping("/google-login")
-    public ResponseEntity<String> authenticateWithGoogle(@RequestParam String firebaseIdToken ){
 
-        try{
+    // We need to test this when
+    @PostMapping("/google-login")
+    public ResponseEntity<String> authenticateWithGoogle(@RequestParam String firebaseIdToken) {
+        try {
             FirebaseToken decodedToken = firebaseAuthService.verifyToken(firebaseIdToken);
             String uid = decodedToken.getUid();
             firebaseAuthService.saveIfUserNotExists(uid);
             return ResponseEntity.ok("User authenticated with UID: " + uid);
-
-        } catch (FirebaseAuthException e){
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();  // Log the exact error for debugging
+            return ResponseEntity.status(401).body("Error: " + e.getMessage());
         }
     }
 
