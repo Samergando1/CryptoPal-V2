@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +16,7 @@ import org.springframework.http.MediaType;
 import java.util.HashMap;
 import java.util.Map;
 
-@SpringBootApplication
+@SpringBootApplication( exclude = SecurityAutoConfiguration.class)
 public class CryptoPalApplication implements CommandLineRunner {
 
     // Replace this with your Firebase Web API Key from the Firebase Console
@@ -34,7 +35,7 @@ public class CryptoPalApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Step 1: Generate a custom token
-        String testUid = "MijXYTNJ9OgL916L8oECDfmaOCy1"; // replace with a meaningful UID for testing
+        String testUid = "BGIgqxLYMgOGl2yhayOcm4HQbQF3"; // replace with a meaningful UID for testing
         String customToken = generateCustomToken(testUid);
 
         if (customToken != null) {

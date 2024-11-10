@@ -30,4 +30,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Custom query to fetch all users with a display name containing a specific string
     List<User> findByDisplayNameContaining(String keyword);
+
 }

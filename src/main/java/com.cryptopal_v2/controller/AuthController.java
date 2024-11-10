@@ -4,6 +4,7 @@ package com.cryptopal_v2.controller;
 import com.cryptopal_v2.model.User;
 import com.cryptopal_v2.repository.UserRepository;
 import com.cryptopal_v2.service.FirebaseAuthService;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("CryptoPal/authorize")
@@ -70,7 +72,7 @@ public class AuthController{
 
             // Create a User instance for local PostgreSQL DB
             User newUser = new User();
-//            newUser.setFirebaseUid(userRecord.getUid());
+            newUser.setFirebaseUid(userRecord.getUid());
             newUser.setEmail(email);
             newUser.setDisplayName(displayName);
             newUser.setCreatedAt(LocalDateTime.now());
@@ -84,28 +86,36 @@ public class AuthController{
         }
     }
 
+
+
+    // Delete Mapping this should delete everything in my postgresDB and all other associations
     /**
-     * Test endpoint to add a user directly without Firebase.
-     * @param user
-     * @return
+     * Delete a user and their associated data in PostgreSQL and Firebase
+     * @param uid The UID of the Firebase user to delete
+     * @return ResponseEntity with deletion status
      */
-    @PostMapping("/test-add-user")
-    public ResponseEntity<String> testAddUser() {
+    @DeleteMapping("/delete-user")
+    public ResponseEntity<String> deleteUser(@RequestParam String uid) {
         try {
-            User newUser = new User();
-            newUser.setEmail("test@example.com");
-            newUser.setDisplayName("Test User");
-            newUser.setCreatedAt(LocalDateTime.now());
+            // Delete user from Firebase
+            FirebaseAuth.getInstance().deleteUser(uid);
 
-            // Use the inherited save method from JpaRepository
-            userRepository.save(newUser);
-
-            return ResponseEntity.ok("Test user added successfully");
+            // Find the user in the local PostgreSQL DB
+            Optional<User> userOptional = userRepository.findByFirebaseUid(uid);
+            if (userOptional.isPresent()) {
+                // Remove associated wallet addresses and any other dependent entities
+                userRepository.delete(userOptional.get());
+                return ResponseEntity.ok("User and all associated data deleted successfully");
+            } else {
+                return ResponseEntity.status(404).body("User not found in the database");
+            }
+        } catch (FirebaseAuthException e) {
+            return ResponseEntity.status(500).body("Error deleting Firebase user: " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace(); // Log the exact error
-            return ResponseEntity.status(500).body("Internal server error: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error deleting user data: " + e.getMessage());
         }
     }
+
 
 
 }

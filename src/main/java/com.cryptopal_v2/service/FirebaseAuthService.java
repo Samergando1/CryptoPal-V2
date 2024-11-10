@@ -58,23 +58,6 @@ public class FirebaseAuthService {
         }
     }
 
-    /**
-     * Saves a test user directly to the database (useful for testing without Firebase).
-     * @param email User's email.
-     * @param displayName User's display name.
-     * @return The saved User object.
-     */
-    public User saveUserForTesting(String email, String displayName) {
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
-            user = new User();
-            user.setDisplayName(displayName);
-            user.setEmail(email);
-            user.setCreatedAt(LocalDateTime.now());
-            userRepository.save(user);
-        }
-        return user;
-    }
 
     /**
      * Saves key user sign in information to the firebase database. So idea is that local postgresDB stores
