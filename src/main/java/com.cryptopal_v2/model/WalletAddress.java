@@ -13,15 +13,25 @@ public class WalletAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "walletAddress")
+
     private String walletAddress;
+    @Column(name = "walletNickname")
+
     private String walletNickname;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+
+
     private User user;
 
     // Additional fields for API data (e.g., balance, last updated)
+    @Column(name = "balance")
+
     private BigDecimal balance;
+    @Column(name = "lastFetched")
+
     private LocalDateTime lastFetched;
 
     // Getters and setters
