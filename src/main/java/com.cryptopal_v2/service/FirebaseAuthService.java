@@ -10,14 +10,21 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Component
 public class FirebaseAuthService {
 
 
-    // Dependacncy injection of repositories for wallet and user not sure
+    /**
+     * Dependancies injection of repositories for wallet and user, allow for loose-coupling and testing with mock db.
+     * Just got practise overall.
+     *
+     */
     @Autowired
     private UserRepository userRepository;
 
@@ -67,6 +74,19 @@ public class FirebaseAuthService {
             userRepository.save(user);
         }
         return user;
+    }
+
+    /**
+     * Saves key user sign in information to the firebase database. So idea is that local postgresDB stores
+     * key user info, while this is what we will use for authenticating user signups
+     * @param request
+     * @return
+     * @throws FirebaseAuthException
+     */
+
+    public UserRecord createUser(UserRecord.CreateRequest request) throws FirebaseAuthException {
+        // This method uses FirebaseAuth to create a user based on the request
+        return FirebaseAuth.getInstance().createUser(request);
     }
 
     /**
