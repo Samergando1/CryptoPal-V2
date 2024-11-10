@@ -1,13 +1,23 @@
 package com.cryptopal_v2.service;
+import com.cryptopal_v2.model.User;
 
+
+import com.cryptopal_v2.model.WalletAddress;
 import com.cryptopal_v2.repository.UserRepository;
+import com.cryptopal_v2.repository.WalletRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class FirebaseAuthService {
 
+
+    // Dependacncy injection of repositories for wallet and user not sure
     @Autowired
     private UserRepository userRepository;
 
@@ -68,7 +78,7 @@ public class FirebaseAuthService {
      */
     public void addWalletAddresses(Long userId, List<String> walletAddresses, List<String> walletNicknames) {
         if (walletAddresses.size() != walletNicknames.size()) {
-            throw new IllegalArgumentException("The number of wallet addresses must match the number of wallet nicknames");
+            throw new IllegalArgumentException("The number of wallet addresses must match the number of portfolios");
         }
 
         // Find the user once outside the loop
