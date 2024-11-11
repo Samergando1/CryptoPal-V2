@@ -1,13 +1,11 @@
 package com.cryptopal_v2.model;
 
-import com.cryptopal_v2.model.User;
-import com.cryptopal_v2.model.WalletAddress;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-public class UserPortfolio {
+public class Portfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +16,7 @@ public class UserPortfolio {
 
     // Reference to the WalletAddress if it's a connected portfolio
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "wallet_address_id", referencedColumnName = "id")
+    @JoinColumn(name = "wallet_address_id", referencedColumnName = "id", nullable = true)
     private WalletAddress walletAddress;
 
     @OneToOne(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -40,6 +38,9 @@ public class UserPortfolio {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void setUser(User user) {
     }
 
     // Getters and Setters

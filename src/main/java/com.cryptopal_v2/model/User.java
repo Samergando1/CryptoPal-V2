@@ -12,10 +12,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "firebase_uid", unique = true)
+    @Column(name = "firebase_uid", unique = true, nullable = false)
     private String firebaseUid;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Column(name = "display_name")
@@ -24,8 +24,9 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    // One-to-many relationship with Portfolio
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WalletAddress> walletAddresses = new ArrayList<>();
+    private List<Portfolio> portfolios = new ArrayList<>();
 
     // Getters and Setters
 
@@ -39,7 +40,7 @@ public class User {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public List<WalletAddress> getWalletAddresses() { return walletAddresses; }
+    public List<Portfolio> getPortfolios() { return portfolios; }
 
     public void setId(Long id) { this.id = id; }
 
@@ -51,19 +52,6 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setWalletAddresses(List<WalletAddress> walletAddresses) { this.walletAddresses = walletAddresses; }
+    public void setPortfolios(List<Portfolio> portfolios) { this.portfolios = portfolios; }
 
-    // Utility methods for wallet addresses
-
-    public void addWalletAddress(WalletAddress walletAddress) {
-        walletAddresses.add(walletAddress);
-        walletAddress.setUser(this);
-    }
-
-    public void removeWalletAddress(WalletAddress walletAddress) {
-        walletAddresses.remove(walletAddress);
-        walletAddress.setUser(null);
-    }
-
-    // Optional: Equals and hashCode based on firebaseUid
 }

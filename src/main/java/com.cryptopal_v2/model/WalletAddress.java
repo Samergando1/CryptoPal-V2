@@ -2,6 +2,7 @@ package com.cryptopal_v2.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,54 +10,40 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "wallet_address")
 public class WalletAddress {
+
+    @Setter
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "walletAddress")
-
+    // Unique wallet address identifier
+    @Getter
+    @Setter
+    @Column(name = "wallet_address", nullable = false, unique = true)
     private String walletAddress;
-    @Column(name = "walletNickname")
 
-    private String walletNickname;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-
-
-    private User user;
-
-    // Additional fields for API data (e.g., balance, last updated)
-    @Column(name = "balance")
-
+    // Balance of the wallet
+    @Getter
+    @Setter
+    @Column(name = "balance", precision = 19, scale = 4)
     private BigDecimal balance;
-    @Column(name = "lastFetched")
 
+    // Last time the balance or other data was fetched
+    @Getter
+    @Setter
+    @Column(name = "last_fetched")
     private LocalDateTime lastFetched;
+
+    // Establishing a one-to-one relationship with Portfolio
+    @Setter
+    @Getter
+    @OneToOne(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Portfolio portfolio;
+
+    @OneToOne(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
+    private WalletAssets walletAssets;
 
     // Getters and setters
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setWalletAddress(String walletAddress) {
-        this.walletAddress = walletAddress;
-    }
-
-    public void setWalletNickname(String walletNickname) {
-        this.walletNickname = walletNickname;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public void setLastFetched(LocalDateTime lastFetched) {
-        this.lastFetched = lastFetched;
-    }
 }

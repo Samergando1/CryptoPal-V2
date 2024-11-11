@@ -2,7 +2,6 @@ package com.cryptopal_v2.controller;
 
 
 import com.cryptopal_v2.model.User;
-import com.cryptopal_v2.repository.UserRepository;
 import com.cryptopal_v2.service.FirebaseAuthService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -10,7 +9,6 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
