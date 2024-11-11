@@ -6,6 +6,8 @@ import jakarta.persistence.Id;
 
 @Entity
 public class WalletTransactions {
+
+    // This we will handle after we make the get Assets logic work !!!
     @Id
     private Long id;
 

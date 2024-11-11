@@ -2,6 +2,7 @@ package com.cryptopal_v2.controller;
 
 
 import com.cryptopal_v2.model.User;
+import com.cryptopal_v2.repository.UserRepository;
 import com.cryptopal_v2.service.FirebaseAuthService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
