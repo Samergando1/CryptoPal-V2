@@ -2,19 +2,15 @@ package com.cryptopal_v2.service;
 import com.cryptopal_v2.model.User;
 
 
-import com.cryptopal_v2.model.WalletAddress;
 import com.cryptopal_v2.repository.UserRepository;
-import com.cryptopal_v2.repository.WalletRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Component
 public class FirebaseAuthService {
@@ -28,8 +24,7 @@ public class FirebaseAuthService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private WalletRepository walletRepository;
+
 
     /**
      * Verifies the Firebase ID token.
@@ -72,42 +67,4 @@ public class FirebaseAuthService {
         return FirebaseAuth.getInstance().createUser(request);
     }
 
-    /**
-     * Adds wallet addresses for a given user.
-     * @param userId ID of the user.
-     * @param walletAddresses List of wallet addresses to add.
-     * @param walletNicknames List of wallet nicknames corresponding to each address.
-     * @throws IllegalArgumentException if the size of addresses and nicknames lists do not match.
-     */
-    public void addWalletAddresses(Long userId, List<String> walletAddresses, List<String> walletNicknames) {
-        if (walletAddresses.size() != walletNicknames.size()) {
-            throw new IllegalArgumentException("The number of wallet addresses must match the number of portfolios");
-        }
-
-        // Find the user once outside the loop
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Loop to save each wallet address with the corresponding nickname
-        for (int i = 0; i < walletAddresses.size(); i++) {
-            WalletAddress newWalletAddress = new WalletAddress();
-            newWalletAddress.setWalletAddress(walletAddresses.get(i));
-            newWalletAddress.setWalletNickname(walletNicknames.get(i));
-            newWalletAddress.setUser(user);
-
-            walletRepository.save(newWalletAddress);
-        }
-    }
-
-    /**
-     * Retrieves all wallet addresses for a given user by user ID.
-     * @param userId ID of the user.
-     * @return List of WalletAddress objects.
-     * @throws RuntimeException if the user is not found.
-     */
-    public List<WalletAddress> getWalletAddressesByUserId(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Could not fetch user by ID: " + userId));
-        return user.getWalletAddresses();
-    }
 }
