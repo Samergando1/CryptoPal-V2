@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("CryptoPal/authorize")
+@RequestMapping("api/authorize")
 public class AuthController{
     private final FirebaseAuthService firebaseAuthService;
     private final UserRepository userRepository;
