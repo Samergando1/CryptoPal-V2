@@ -35,4 +35,69 @@ public class WalletAssets {
     private String tokenId;
 
     // Getters and Setters
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public WalletAddress getWalletAddress() {
+        return walletAddress;
+    }
+
+    public void setWalletAddress(WalletAddress walletAddress) {
+        this.walletAddress = walletAddress;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public String getTokenContractAddress() {
+        return tokenContractAddress;
+    }
+
+    public void setTokenContractAddress(String tokenContractAddress) {
+        this.tokenContractAddress = tokenContractAddress;
+    }
+
+    public BigDecimal getHoldingAmount() {
+        return holdingAmount;
+    }
+
+    public void setHoldingAmount(BigDecimal holdingAmount) {
+        this.holdingAmount = holdingAmount;
+    }
+
+    public BigDecimal getPriceUsd() {
+        return priceUsd;
+    }
+
+    public void setPriceUsd(BigDecimal priceUsd) {
+        this.priceUsd = priceUsd;
+    }
+
+    public BigDecimal getValueUsd() {
+        return valueUsd;
+    }
+
+    public void setValueUsd(BigDecimal valueUsd) {
+        this.valueUsd = valueUsd;
+    }
+
+    public String getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId;
+    }
 }

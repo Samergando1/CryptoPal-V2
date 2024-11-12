@@ -88,4 +88,6 @@ public class WalletAddress {
     public void setWalletAssets(WalletAssets walletAssets) {
         this.walletAssets = walletAssets;
     }
+
+
 }

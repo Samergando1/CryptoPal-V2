@@ -1,6 +1,8 @@
 package com.cryptopal_v2.model;
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
