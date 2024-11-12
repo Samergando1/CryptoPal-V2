@@ -9,10 +9,12 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Component
+@Service
 public class FirebaseAuthService {
 
 
