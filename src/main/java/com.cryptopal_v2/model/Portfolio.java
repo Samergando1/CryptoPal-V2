@@ -12,8 +12,8 @@ public class Portfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String avatar;
 
+    private String avatar;
     private String name; // Name of the portfolio
     private boolean isConnected; // True if connected to a wallet, false for manual
 
@@ -29,9 +29,12 @@ public class Portfolio {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // Link Portfolio to a specific user
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id")  // Remove insertable = false, updatable = false
     private User user;
+
+
 
     @PrePersist
     protected void onCreate() {
@@ -44,6 +47,7 @@ public class Portfolio {
     }
 
     public void setUser(User user) {
+        this.user = user;
     }
 
     // Getters and Setters

@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,16 +37,20 @@ public class AuthController{
      */
 
     @PostMapping("/google-login")
-    public ResponseEntity<String> authenticateWithGoogle(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Map<String, String>> authenticateWithGoogle(@RequestBody Map<String, String> payload) {
         try {
-            String firebaseIdToken = payload.get("firebaseIdToken"); // Extract token from JSON
+            String firebaseIdToken = payload.get("firebaseIdToken");
             FirebaseToken decodedToken = firebaseAuthService.verifyToken(firebaseIdToken);
             String uid = decodedToken.getUid();
             firebaseAuthService.saveIfUserNotExists(uid);
-            return ResponseEntity.ok("User authenticated with UID: " + uid);
+
+            // Return UID as a JSON response
+            Map<String, String> response = new HashMap<>();
+            response.put("userId", uid);
+            return ResponseEntity.ok(response);
         } catch (FirebaseAuthException e) {
-            e.printStackTrace();  // Log the exact error for debugging
-            return ResponseEntity.status(401).body("Error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(401).body(Collections.singletonMap("error", e.getMessage()));
         }
     }
 

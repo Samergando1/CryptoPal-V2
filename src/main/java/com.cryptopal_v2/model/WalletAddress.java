@@ -15,22 +15,14 @@ public class WalletAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Unique wallet address identifier
-
     @Column(name = "wallet_address", nullable = false, unique = true)
     private String walletAddress;
 
-    // Balance of the wallet
-
-    @Column(name = "balance", precision = 19, scale = 4)
-    private BigDecimal balance;
-
-    // Last time the balance or other data was fetched
+    @Column(name = "firebase_uid", nullable = false)
+    private String firebaseUid;
 
     @Column(name = "last_fetched")
     private LocalDateTime lastFetched;
-
-    // Establishing a one-to-one relationship with Portfolio
 
     @OneToOne(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
@@ -38,8 +30,21 @@ public class WalletAddress {
     @OneToOne(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
     private WalletAssets walletAssets;
 
+    // New association with User
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     // Getters and setters
 
+
+    public String getFirebaseUid() {
+        return firebaseUid;
+    }
+
+    public void setFirebaseUid(String firebaseUid) {
+        this.firebaseUid = firebaseUid;
+    }
 
     public Long getId() {
         return id;
@@ -57,13 +62,7 @@ public class WalletAddress {
         this.walletAddress = walletAddress;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
 
     public LocalDateTime getLastFetched() {
         return lastFetched;
@@ -90,4 +89,7 @@ public class WalletAddress {
     }
 
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

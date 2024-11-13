@@ -21,17 +21,18 @@ public class PortfolioController {
     private WalletAssetsService walletAssetsService;
 
 
-    // Create a new portfolio
     @PostMapping("/create-wallet-portfolio")
     public ResponseEntity<String> createWalletPortfolio(
+            @RequestHeader("userId") String firebaseUID, // Now userId is kept as String
             @RequestBody Portfolio portfolio,
-            @RequestParam boolean connectWallet,
-            @RequestParam Long userId) {
+            @RequestParam boolean connectWallet) {
+
         try {
-            Portfolio createdPortfolio = portfolioService.createPortfolio(portfolio, userId);
+            // Pass userId as String to the service layer without parsing to Long
+            Portfolio createdPortfolio = portfolioService.createPortfolio(portfolio, firebaseUID);
 
             if (connectWallet) {
-                walletAssetsService.fetchAssetsForWallet(createdPortfolio.getWalletAddress());
+                walletAssetsService.fetchAndSaveAssets(createdPortfolio.getWalletAddress());
             }
             return ResponseEntity.ok("Portfolio created successfully");
         } catch (Exception e) {

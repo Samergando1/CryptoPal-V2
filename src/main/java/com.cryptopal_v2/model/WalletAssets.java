@@ -11,31 +11,33 @@ public class WalletAssets {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Link to WalletAddress
+    // Link to WalletAddress with many-to-one relationship since multiple assets can be linked to a wallet address
     @OneToOne
     @JoinColumn(name = "wallet_address_id", referencedColumnName = "id", nullable = false)
     private WalletAddress walletAddress;
 
-    @Column(name = "symbol")
+    @Column(name = "symbol", nullable = false)
     private String symbol;
 
-    @Column(name = "token_contract_address")
+    @Column(name = "token_contract_address", nullable = false)
     private String tokenContractAddress;
 
-    @Column(name = "holding_amount")
+    @Column(name = "token_type")
+    private String tokenType;
+
+    @Column(name = "holding_amount", precision = 36, scale = 18)
     private BigDecimal holdingAmount;
 
-    @Column(name = "price_usd")
+    @Column(name = "price_usd", precision = 36, scale = 18)
     private BigDecimal priceUsd;
 
-    @Column(name = "value_usd")
+    @Column(name = "value_usd", precision = 36, scale = 18)
     private BigDecimal valueUsd;
 
     @Column(name = "token_id")
     private String tokenId;
 
     // Getters and Setters
-
 
     public Long getId() {
         return id;
@@ -67,6 +69,14 @@ public class WalletAssets {
 
     public void setTokenContractAddress(String tokenContractAddress) {
         this.tokenContractAddress = tokenContractAddress;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
     }
 
     public BigDecimal getHoldingAmount() {

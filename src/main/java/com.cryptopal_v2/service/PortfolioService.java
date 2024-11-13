@@ -31,13 +31,13 @@ public class PortfolioService {
     /**
      * Creates a new portfolio for a user, optionally connecting it to a wallet address.
      * @param portfolioRequest
-     * @param userId
+     * @param firebaseUid
      * @return
      */
     @Transactional
-    public Portfolio createPortfolio(Portfolio portfolioRequest, Long userId) {
+    public Portfolio createPortfolio(Portfolio portfolioRequest, String firebaseUid) {
         // Fetch user from repository
-        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<User> userOpt = userRepository.findByFirebaseUid(firebaseUid);
         if (userOpt.isEmpty()) {
             throw new RuntimeException("User not found");
         }
@@ -50,19 +50,20 @@ public class PortfolioService {
         portfolio.setUser(user);
         portfolio.setAvatar(portfolioRequest.getAvatar()); // Set avatar if provided
 
-        // Handle wallet address connection if specified
-        if (portfolio.getIsConnected() && portfolioRequest.getWalletAddress() != null) {
+        if (portfolio.getIsConnected() && portfolioRequest.getWalletAddress() != null && portfolioRequest.getWalletAddress().getWalletAddress() != null) {
             WalletAddress wallet = new WalletAddress();
             wallet.setWalletAddress(portfolioRequest.getWalletAddress().getWalletAddress());
-            wallet.setId(userId);  // Associate wallet with user
+            wallet.setFirebaseUid(firebaseUid);  // Associate the Firebase UID
+            wallet.setUser(user);                // Set the user here
             portfolio.setWalletAddress(wallet);
 
             // Save wallet address in the repository
             walletAddressRepository.save(wallet);
 
             // Fetch initial assets for the wallet
-            walletAssetsService.fetchAssetsForWallet(wallet);
+            walletAssetsService.fetchAndSaveAssets(wallet);
         }
+
 
         // Save and return the newly created portfolio
         return portfolioRepository.save(portfolio);
@@ -99,7 +100,7 @@ public class PortfolioService {
         portfolioRepository.findByIsConnected(true).forEach(portfolio -> {
             WalletAddress walletAddress = portfolio.getWalletAddress();
             if (walletAddress != null) {
-                walletAssetsService.fetchAndSaveAssets(WalletAddress walletAddress, String jsonResponse);
+                walletAssetsService.fetchAndSaveAssets(walletAddress);
 
             }
         });

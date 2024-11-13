@@ -35,7 +35,7 @@ public class CryptoPalApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Step 1: Generate a custom token
-        String testUid = "BGIgqxLYMgOGl2yhayOcm4HQbQF3"; // replace with a meaningful UID for testing
+        String testUid = "AV88uBnPYNXlc8YkK3fASlNDtLu2"; // replace with a meaningful UID for testing
         String customToken = generateCustomToken(testUid);
 
         if (customToken != null) {
