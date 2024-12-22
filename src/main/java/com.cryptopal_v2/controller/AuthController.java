@@ -35,7 +35,6 @@ public class AuthController{
      * @param  payload
      * @return
      */
-
     @PostMapping("/google-login")
     public ResponseEntity<Map<String, String>> authenticateWithGoogle(@RequestBody Map<String, String> payload) {
         try {
@@ -75,7 +74,7 @@ public class AuthController{
 
             UserRecord userRecord = firebaseAuthService.createUser(request);
 
-            // Create a User instance for local PostgreSQL DB
+            // Create a User instance for local PostgresSQL DB
             User newUser = new User();
             newUser.setFirebaseUid(userRecord.getUid());
             newUser.setEmail(email);
@@ -95,7 +94,7 @@ public class AuthController{
 
     // Delete Mapping this should delete everything in my postgresDB and all other associations
     /**
-     * Delete a user and their associated data in PostgreSQL and Firebase
+     * Delete a user and their associated data in postgresSQL and Firebase
      * @param uid The UID of the Firebase user to delete
      * @return ResponseEntity with deletion status
      */
@@ -105,7 +104,7 @@ public class AuthController{
             // Delete user from Firebase
             FirebaseAuth.getInstance().deleteUser(uid);
 
-            // Find the user in the local PostgreSQL DB
+            // Find the user in the local PostgresSQL DB
             Optional<User> userOptional = userRepository.findByFirebaseUid(uid);
             if (userOptional.isPresent()) {
                 // Remove associated wallet addresses and any other dependent entities
@@ -125,4 +124,3 @@ public class AuthController{
 
 }
 
-// Add Post Mappings for WalletAddresses

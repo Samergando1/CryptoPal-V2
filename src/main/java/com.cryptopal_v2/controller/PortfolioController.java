@@ -14,16 +14,20 @@ import java.util.Optional;
 @RequestMapping("/api/portfolio")
 public class PortfolioController {
 
-    @Autowired
-    private PortfolioService portfolioService;
+    private final PortfolioService portfolioService;
+    private final WalletAssetsService walletAssetsService;
 
     @Autowired
-    private WalletAssetsService walletAssetsService;
+    public PortfolioController(PortfolioService portfolioService, WalletAssetsService walletAssetsService) {
+        this.portfolioService = portfolioService;
+        this.walletAssetsService = walletAssetsService;
+    }
+
 
 
     @PostMapping("/create-wallet-portfolio")
     public ResponseEntity<String> createWalletPortfolio(
-            @RequestHeader("userId") String firebaseUID, // Now userId is kept as String
+            @RequestHeader("userId") String firebaseUID, // Now userId is kept as String since all actions require signin
             @RequestBody Portfolio portfolio,
             @RequestParam boolean connectWallet) {
 

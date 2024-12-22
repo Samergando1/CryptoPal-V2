@@ -1,12 +1,12 @@
 package com.cryptopal_v2.model;
 
 import jakarta.persistence.*;
+
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Component
 public class Portfolio {
 
     @Id
@@ -35,7 +35,6 @@ public class Portfolio {
     private User user;
 
 
-
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -46,13 +45,13 @@ public class Portfolio {
         updatedAt = LocalDateTime.now();
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public Long getId() {
+        return id;
     }
 
-    // Getters and Setters
-    // Could have used Lombok but I was having real issues with this breaking build, might add this later.
-
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getAvatar() {
         return avatar;
@@ -60,22 +59,6 @@ public class Portfolio {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
-    }
-
-    public WalletAddress getWalletAddress() {
-        return walletAddress;
-    }
-
-    public void setWalletAddress(WalletAddress walletAddress) {
-        this.walletAddress = walletAddress;
-    }
-
-    public boolean getIsConnected() {
-        return isConnected;
-    }
-
-    public void setIsConnected(boolean connected) {
-        isConnected = connected;
     }
 
     public String getName() {
@@ -86,4 +69,51 @@ public class Portfolio {
         this.name = name;
     }
 
+    public boolean getIsConnected() {
+        return isConnected;
+    }
+
+    public void setIsConnected(boolean connected) {
+        isConnected = connected;
+    }
+
+    public WalletAddress getWalletAddress() {
+        return walletAddress;
+    }
+
+    public void setWalletAddress(WalletAddress walletAddress) {
+        this.walletAddress = walletAddress;
+    }
+
+    public ManualAssets getManualAsset() {
+        return manualAsset;
+    }
+
+    public void setManualAsset(ManualAssets manualAsset) {
+        this.manualAsset = manualAsset;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
