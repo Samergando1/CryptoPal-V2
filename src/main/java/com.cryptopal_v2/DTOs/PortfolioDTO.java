@@ -1,11 +1,13 @@
 package com.cryptopal_v2.DTOs;
 
 
-/**OØ
+import com.cryptopal_v2.model.WalletAddress;
+
+/**
  * 1
  * @param walletAddress
  * @param portfolioName
  */
-public record PortfolioDTO(String walletAddress, String portfolioName) {}
+public record PortfolioDTO(WalletAddress walletAddress, String portfolioName, String avatar, boolean isConnected) {}
 
 

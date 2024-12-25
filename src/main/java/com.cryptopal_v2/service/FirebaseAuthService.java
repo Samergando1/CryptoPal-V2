@@ -18,13 +18,15 @@ import java.time.LocalDateTime;
 public class FirebaseAuthService {
 
 
+    private final UserRepository userRepository;
+
     /**
-     * Dependancies injection of repositories for wallet and user, allow for loose-coupling and testing with mock db.
-     * Just got practise overall.
-     *
+     * Constructor-based Dependency Injection
+     * @param userRepository UserRepository for database operations
      */
-    @Autowired
-    private UserRepository userRepository;
+    public FirebaseAuthService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
 
@@ -44,6 +46,7 @@ public class FirebaseAuthService {
      * @throws FirebaseAuthException if there's an error fetching the user from Firebase.
      */
     public void saveIfUserNotExists(String uid) throws FirebaseAuthException {
+        // checks if our local firebase database has the user ID if it doesn't it proceeds to creating user
         if (!userRepository.existsByFirebaseUid(uid)) {
             UserRecord userRecord = FirebaseAuth.getInstance().getUser(uid);
             User user = new User();

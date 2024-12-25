@@ -1,5 +1,6 @@
 package com.cryptopal_v2.service;
 
+import com.cryptopal_v2.DTOs.PortfolioDTO;
 import com.cryptopal_v2.model.Portfolio;
 import com.cryptopal_v2.model.User;
 import com.cryptopal_v2.model.WalletAddress;
@@ -27,47 +28,6 @@ public class PortfolioService {
 
     @Autowired
     private WalletAssetsService walletAssetsService;
-
-    /**
-     * Creates a new portfolio for a user, optionally connecting it to a wallet address.
-     * @param portfolioRequest
-     * @param firebaseUid
-     * @return
-     */
-    @Transactional
-    public Portfolio createPortfolio(Portfolio portfolioRequest, String firebaseUid) {
-        // Fetch user from repository
-        Optional<User> userOpt = userRepository.findByFirebaseUid(firebaseUid);
-        if (userOpt.isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
-        User user = userOpt.get();
-
-        // Initialize Portfolio from the incoming request data
-        Portfolio portfolio = new Portfolio();
-        portfolio.setName(portfolioRequest.getName());
-        portfolio.setIsConnected(portfolioRequest.getIsConnected());
-        portfolio.setUser(user);
-        portfolio.setAvatar(portfolioRequest.getAvatar()); // Set avatar if provided
-
-        if (portfolio.getIsConnected() && portfolioRequest.getWalletAddress() != null && portfolioRequest.getWalletAddress().getWalletAddress() != null) {
-            WalletAddress wallet = new WalletAddress();
-            wallet.setWalletAddress(portfolioRequest.getWalletAddress().getWalletAddress());
-            wallet.setFirebaseUid(firebaseUid);  // Associate the Firebase UID
-            wallet.setUser(user);                // Set the user here
-            portfolio.setWalletAddress(wallet);
-
-            // Save wallet address in the repository
-            walletAddressRepository.save(wallet);
-
-            // Fetch initial assets for the wallet
-            walletAssetsService.fetchAndSaveAssets(wallet);
-        }
-
-
-        // Save and return the newly created portfolio
-        return portfolioRepository.save(portfolio);
-    }
 
     /**
      * Deletes a portfolio and removes associated wallet and assets if necessary.
@@ -104,5 +64,52 @@ public class PortfolioService {
 
             }
         });
+    }
+
+    /**
+     * Creates a new portfolio for a user, optionally connecting it to a wallet address.
+     * The @Transactional here ensures changes do not persist if they are any exceptions thrown in the service
+     * @param portfolioRequestDTO
+     * @param firebaseUid
+     * @return
+     */
+    @Transactional
+    public Portfolio createPortfolio(PortfolioDTO portfolioRequestDTO, String firebaseUid) {
+        // Fetch user from repository
+        // The precondition is really that the user has been created and exists within our database
+        Optional<User> userOpt = userRepository.findByFirebaseUid(firebaseUid);
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found!");
+        }
+        User user = userOpt.get();      // getting the user object stored in the database
+
+        // creates a portfolio model to represent the logged in user
+
+        // Create a portfolio model to represent the logged-in user
+        Portfolio portfolio = new Portfolio();
+        portfolio.setName(portfolioRequestDTO.portfolioName());
+        portfolio.setIsConnected(portfolioRequestDTO.isConnected());
+        portfolio.setAvatar(portfolioRequestDTO.avatar());
+        portfolio.setUser(user); // Associate the portfolio with the logged-in user
+
+
+
+        if (portfolioRequestDTO.isConnected() && portfolioRequestDTO.walletAddress() != null) {
+            WalletAddress wallet = new WalletAddress();
+            wallet.setWalletAddress(portfolioRequestDTO.walletAddress().getWalletAddress());
+            wallet.setFirebaseUid(firebaseUid); // Associate the Firebase UID
+            wallet.setUser(user); // Set the user here
+            portfolio.setWalletAddress(wallet); // Associate the wallet with the portfolio
+
+            // Save wallet address in the repository
+            walletAddressRepository.save(wallet);
+
+            // Fetch initial assets for the wallet
+            walletAssetsService.fetchAndSaveAssets(wallet);
+        }
+
+
+        // Save and return the newly created portfolio
+        return portfolioRepository.save(portfolio);
     }
 }

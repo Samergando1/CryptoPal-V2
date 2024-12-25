@@ -68,9 +68,6 @@ public class WalletAddress {
         return lastFetched;
     }
 
-    public void setLastFetched(LocalDateTime lastFetched) {
-        this.lastFetched = lastFetched;
-    }
 
     public Portfolio getPortfolio() {
         return portfolio;

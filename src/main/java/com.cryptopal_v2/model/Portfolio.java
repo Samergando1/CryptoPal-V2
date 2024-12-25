@@ -15,7 +15,7 @@ public class Portfolio {
 
     private String avatar;
     private String name; // Name of the portfolio
-    private boolean isConnected; // True if connected to a wallet, false for manual
+    private boolean isConnected; // True if connected to a wallet, false for manual asset since these two portfolio types are managed differently
 
     // Reference to the WalletAddress if it's a connected portfolio
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -97,17 +97,11 @@ public class Portfolio {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 
     public User getUser() {
         return user;
