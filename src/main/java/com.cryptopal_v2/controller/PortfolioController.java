@@ -15,19 +15,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/portfolio")
 public class PortfolioController {
-
     private final PortfolioService portfolioService;
     private final WalletAssetsService walletAssetsService;
     private final JWTService jwtService; // jwt service needs definition
-
-
 
     /**
      * Always use constructor based dependancy injection to ensure loose coupling between classess
      * @param portfolioService
      * @param walletAssetsService
      */
-
     @Autowired
     public PortfolioController(PortfolioService portfolioService, WalletAssetsService walletAssetsService, JWTService jwtService)  {
         this.portfolioService = portfolioService;
@@ -35,31 +31,26 @@ public class PortfolioController {
         this.jwtService = jwtService;
     }
 
-
-
     /**
      * Handles creation of wallet both on the UI and the all the accompanying models for the database to store this information.
      * @param authHeader
-     * @param portfolioRequest
-     * @param connectWallet
+     * @param portfolioRequestDTO
      * @return
      */
     @PostMapping("/create-wallet-portfolio")
     public ResponseEntity<String> createWalletPortfolio(
             @RequestHeader("Authorization") String authHeader, // Now userId is kept as String since all actions require signup
-            @RequestBody PortfolioDTO portfolioRequestDTO,
-            @RequestParam boolean connectWallet) { // boolean to see if the portfolio is connected to wallet or manual
+            @RequestBody PortfolioDTO portfolioRequestDTO) { // boolean to see if the portfolio is connected to wallet or manual
 
         try {
             // validate jwt token
             String token = authHeader.replace("Bearer ", "");
-            String firebaseUID = jwtService.validateToken(token).getSubject();
-
+            String firebaseUID = jwtService.validateToken(token).getSubject(); // validates token an decrypts json payload
 
             // Pass userId as String to the service layer without parsing to Long
             Portfolio createdPortfolio = portfolioService.createPortfolio(portfolioRequestDTO, firebaseUID);
 
-            if (connectWallet) {
+            if (createdPortfolio.getIsConnected()) {
                 walletAssetsService.fetchAndSaveAssets(createdPortfolio.getWalletAddress());
             }
             return ResponseEntity.ok("Portfolio created successfully");
@@ -67,8 +58,6 @@ public class PortfolioController {
             return ResponseEntity.badRequest().body("Error creating portfolio: " + e.getMessage());
         }
     }
-
-
 
     // Delete a portfolio by ID
     @DeleteMapping("/delete-portfolio/{id}")

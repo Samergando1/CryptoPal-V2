@@ -30,43 +30,6 @@ public class PortfolioService {
     private WalletAssetsService walletAssetsService;
 
     /**
-     * Deletes a portfolio and removes associated wallet and assets if necessary.
-     *
-     * @param portfolioId the ID of the portfolio to delete
-     */
-    @Transactional
-    public void deletePortfolio(Long portfolioId) {
-        Optional<Portfolio> portfolioOpt = portfolioRepository.findById(portfolioId);
-        if (portfolioOpt.isEmpty()) {
-            throw new RuntimeException("Portfolio not found");
-        }
-
-        Portfolio portfolio = portfolioOpt.get();
-        if (portfolio.getIsConnected() && portfolio.getWalletAddress() != null) {
-            // Delete associated wallet and assets
-            walletAddressRepository.delete(portfolio.getWalletAddress());
-        }
-
-        // Delete the portfolio
-        portfolioRepository.delete(portfolio);
-    }
-
-    /**
-     * Polling mechanism for updating assets of connected portfolios every 10 minutes.
-     */
-    @Scheduled(fixedRate = 600000) // 10 minutes in milliseconds
-    public void pollForConnectedWalletUpdates() {
-        // Find all portfolios with connected wallets
-        portfolioRepository.findByIsConnected(true).forEach(portfolio -> {
-            WalletAddress walletAddress = portfolio.getWalletAddress();
-            if (walletAddress != null) {
-                walletAssetsService.fetchAndSaveAssets(walletAddress);
-
-            }
-        });
-    }
-
-    /**
      * Creates a new portfolio for a user, optionally connecting it to a wallet address.
      * The @Transactional here ensures changes do not persist if they are any exceptions thrown in the service
      * @param portfolioRequestDTO
@@ -92,8 +55,6 @@ public class PortfolioService {
         portfolio.setAvatar(portfolioRequestDTO.avatar());
         portfolio.setUser(user); // Associate the portfolio with the logged-in user
 
-
-
         if (portfolioRequestDTO.isConnected() && portfolioRequestDTO.walletAddress() != null) {
             WalletAddress wallet = new WalletAddress();
             wallet.setWalletAddress(portfolioRequestDTO.walletAddress().getWalletAddress());
@@ -107,9 +68,43 @@ public class PortfolioService {
             // Fetch initial assets for the wallet
             walletAssetsService.fetchAndSaveAssets(wallet);
         }
-
-
         // Save and return the newly created portfolio
+
         return portfolioRepository.save(portfolio);
+    }
+
+    /**
+     * Deletes a portfolio and removes associated wallet and assets if necessary.
+     * @param portfolioId the ID of the portfolio to delete
+     */
+    @Transactional
+    public void deletePortfolio(Long portfolioId) {
+        Optional<Portfolio> portfolioOpt = portfolioRepository.findById(portfolioId);
+        if (portfolioOpt.isEmpty()) {
+            throw new RuntimeException("Portfolio not found");
+        }
+
+        Portfolio portfolio = portfolioOpt.get();
+        if (portfolio.getIsConnected() && portfolio.getWalletAddress() != null) {
+            // Delete associated wallet and assets
+            walletAddressRepository.delete(portfolio.getWalletAddress());
+        }
+        // Delete the portfolio
+        portfolioRepository.delete(portfolio);
+    }
+
+    /**
+     * Polling mechanism for updating assets of connected portfolios every 5 minutes.
+     */
+    @Scheduled(fixedRate = 300000) // 10 minutes in milliseconds
+    public void pollForConnectedWalletUpdates() {
+        // Find all portfolios with connected wallets
+        portfolioRepository.findByIsConnected(true).forEach(portfolio -> {
+            WalletAddress walletAddress = portfolio.getWalletAddress();
+            if (walletAddress != null) {
+                walletAssetsService.fetchAndSaveAssets(walletAddress);
+
+            }
+        });
     }
 }
