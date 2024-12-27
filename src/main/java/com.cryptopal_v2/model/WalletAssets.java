@@ -11,21 +11,21 @@ public class WalletAssets {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Link to WalletAddress with many-to-one relationship since multiple assets can be linked to a wallet address
-    @OneToOne // Changed to ManyToOne as multiple assets can be linked to the same wallet
+    // Link to WalletAddress with a many-to-one relationship
+    @ManyToOne
     @JoinColumn(name = "wallet_address_id", referencedColumnName = "id", nullable = false)
     private WalletAddress walletAddress;
 
-    @Column(name = "symbol")
+    @Column(name = "symbol", nullable = false)
     private String symbol;
 
-    @Column(name = "token_contract_address")
+    @Column(name = "token_contract_address", nullable = false)
     private String tokenContractAddress;
 
     @Column(name = "token_type")
     private String tokenType;
 
-    @Column(name = "holding_amount", precision = 38, scale = 18)
+    @Column(name = "holding_amount", precision = 38, scale = 18, nullable = false)
     private BigDecimal holdingAmount;
 
     @Column(name = "price_usd", precision = 38, scale = 18)
@@ -34,14 +34,23 @@ public class WalletAssets {
     @Column(name = "value_usd", precision = 38, scale = 18)
     private BigDecimal valueUsd;
 
+    @Column(name = "total_supply", precision = 38, scale = 18)
+    private BigDecimal totalSupply;
 
+    @Column(name = "decimals", nullable = false)
+    private Integer decimals;
 
+    @Column(name = "logo_uri")
+    private String logoUri;
 
-    @Column(name = "token_id", nullable = true)
+    @Column(name = "homepage_url")
+    private String homepageUrl;
+
+    // Token ID (optional, for NFTs or special tokens)
+    @Column(name = "token_id")
     private String tokenId;
 
     // Getters and Setters
-
     public Long getId() {
         return id;
     }
@@ -104,6 +113,38 @@ public class WalletAssets {
 
     public void setValueUsd(BigDecimal valueUsd) {
         this.valueUsd = valueUsd;
+    }
+
+    public BigDecimal getTotalSupply() {
+        return totalSupply;
+    }
+
+    public void setTotalSupply(BigDecimal totalSupply) {
+        this.totalSupply = totalSupply;
+    }
+
+    public Integer getDecimals() {
+        return decimals;
+    }
+
+    public void setDecimals(Integer decimals) {
+        this.decimals = decimals;
+    }
+
+    public String getLogoUri() {
+        return logoUri;
+    }
+
+    public void setLogoUri(String logoUri) {
+        this.logoUri = logoUri;
+    }
+
+    public String getHomepageUrl() {
+        return homepageUrl;
+    }
+
+    public void setHomepageUrl(String homepageUrl) {
+        this.homepageUrl = homepageUrl;
     }
 
     public String getTokenId() {

@@ -19,8 +19,12 @@ import java.math.RoundingMode;
 @Service
 public class WalletAssetsService {
 
+    // write the business logic for this service later
+    private final WalletAssetsRepository walletAssetsRepository;
     @Autowired
-    private WalletAssetsRepository walletAssetsRepository;
+    public WalletAssetsService(WalletAssetsRepository walletAssetsRepository){
+        this.walletAssetsRepository = walletAssetsRepository;
+    }
 
     private static final String API_KEY = "f1af3d83-6af7-4830-ba7e-fef3a348532a"; // Replace with your actual API key
     String API_URL = "https://www.oklink.com/api/v5/explorer/address/token-balance";
