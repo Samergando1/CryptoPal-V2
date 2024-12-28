@@ -97,6 +97,8 @@ public class WalletAssetsService {
             List<WalletAssetResponse> walletAssetResponses = walletAssetWrapperDTO.getData();
 
             for( WalletAssetResponse walletResponse : walletAssetResponses){
+                // map to a wallet model and save it to the wallet repository
+
 
 
             }
@@ -111,10 +113,6 @@ public class WalletAssetsService {
 
     }
 
-    // first we need to call api and fetch response in the form of a json payload
-
-
-    // use object mapper to parse wallet asset into a dto
 
 
 
