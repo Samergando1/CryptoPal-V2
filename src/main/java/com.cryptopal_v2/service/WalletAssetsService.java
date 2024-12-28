@@ -1,114 +1,125 @@
 package com.cryptopal_v2.service;
 
+import ch.qos.logback.core.subst.Token;
+import com.cryptopal_v2.DTOs.WalletAssetWrapperDTO;
 import com.cryptopal_v2.model.WalletAddress;
 import com.cryptopal_v2.model.WalletAssets;
+import com.cryptopal_v2.repository.WalletAddressRepository;
 import com.cryptopal_v2.repository.WalletAssetsRepository;
+import com.cryptopal_v2.responses.WalletAssetResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WalletAssetsService {
 
     // write the business logic for this service later
     private final WalletAssetsRepository walletAssetsRepository;
+    private final WalletAddressRepository walletAddressRepository;
+    private final ObjectMapper objectMapper;
+
+
+    private final WebClient webClient;
+    private final String apiKey; // API Key from .env file
+
     @Autowired
-    public WalletAssetsService(WalletAssetsRepository walletAssetsRepository){
+    public WalletAssetsService(WalletAssetsRepository walletAssetsRepository,
+                               WalletAddressRepository walletAddressRepository,
+                               ObjectMapper objectMapper,
+                               WebClient webClient,         // fix the web client config
+                               @Value("${API_KEYy}") String apiKey){
         this.walletAssetsRepository = walletAssetsRepository;
+        this.walletAddressRepository = walletAddressRepository;
+        this.objectMapper = objectMapper;
+        this.webClient = WebClient.builder()
+                .baseUrl("https://api.chainbase.online/v1")
+                .build();
+
+        Dotenv dotenv = Dotenv.configure().load();
+        this.apiKey = dotenv.get("API_KEY");
     }
 
-    private static final String API_KEY = "f1af3d83-6af7-4830-ba7e-fef3a348532a"; // Replace with your actual API key
-    String API_URL = "https://www.oklink.com/api/v5/explorer/address/token-balance";
-    String chainShortName = "eth";  // Ensure this matches the expected blockchain short name.
-    String address = "0xdac17f958d2ee523a2206206994597c13d831ec7";  // Replace with the address you need.
-    String protocolType = "token_20";  // Set this to "token_20" for ERC-20 tokens.
-    int limit = 1;
 
-    // Construct the URL with parameters
-    String url = API_URL + "?chainShortName=" + chainShortName + "&address=" + address + "&protocolType=" + protocolType + "&limit=" + limit;
+    /**
+     * fetchWalletAssets will call the api endpoint and fetch the corresponding json response
+     * @param walletAddress
+     */
+    public void fetchWalletAssets(String walletAddress){
 
 
-    public void fetchAndSaveAssets(WalletAddress walletAddress) {
-        RestTemplate restTemplate = new RestTemplate();
 
-        try {
-            // Set up headers with the correct API key header
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("OK-ACCESS-KEY", API_KEY);
+        // Safety feature - we also should make sure that the program doesn't proceed with null address
 
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+        Optional<WalletAddress> walletAddressOpt = walletAddressRepository.findByWalletAddress(walletAddress);
 
-
-            String jsonResponse = restTemplate.exchange(url, HttpMethod.GET, entity, String.class).getBody();
-
-            if (jsonResponse != null) {
-                parseAndSaveAssets(walletAddress, jsonResponse);
-            }
-        } catch (HttpClientErrorException e) {
-            System.err.println("HTTP error occurred: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
-        } catch (Exception e) {
-            System.err.println("An error occurred: " + e.getMessage());
+        if (walletAddressOpt.isEmpty()) {
+            throw new RuntimeException("WalletAddress not found for: " + walletAddress);
         }
-    }
+        WalletAddress existingWalletAddress = walletAddressOpt.get();
 
-    private void parseAndSaveAssets(WalletAddress walletAddress, String jsonResponse) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(jsonResponse);
+        // setting up a json request payload
+        String jsonResponse = webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                    .path("/account/tokens")
+                    .queryParam("chain_id", "1")
+                    .queryParam("address", walletAddress)
+                    .queryParam("limit", 10)
+                    .queryParam("page", 1)
+                    .build())
+                .header("x-api-key", apiKey)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
-            // Check if "data" field exists and is an array
-            JsonNode dataNode = rootNode.path("data");
-            if (!dataNode.isArray() || dataNode.isEmpty()) {
-                System.err.println("Error: 'data' field is missing or empty in JSON response.");
-                return;
+
+        // map the created json objects to models we can save to our database
+
+        try{
+            // now JSON data can be put into wrapper dto for further processing
+            WalletAssetWrapperDTO walletAssetWrapperDTO = objectMapper.readValue(jsonResponse, WalletAssetWrapperDTO.class);
+            List<WalletAssetResponse> walletAssetResponses = walletAssetWrapperDTO.getData();
+
+            for( WalletAssetResponse walletResponse : walletAssetResponses){
+
+
             }
 
-            // Check if "tokenList" exists in data[0]
-            JsonNode tokenList = dataNode.get(0).path("tokenList");
-            if (!tokenList.isArray() || tokenList.isEmpty()) {
-                System.err.println("Error: 'tokenList' field is missing or empty.");
-                return;
-            }
 
-            // Iterate through the token list and save each asset
-            for (JsonNode tokenNode : tokenList) {
-                WalletAssets asset = new WalletAssets();
-                asset.setWalletAddress(walletAddress);
-                asset.setSymbol(tokenNode.path("symbol").asText(null));  // Set default null if missing
-                asset.setTokenContractAddress(tokenNode.path("tokenContractAddress").asText(null));
-                asset.setTokenType(tokenNode.path("tokenType").asText(null));
-                asset.setHoldingAmount(parseBigDecimal(tokenNode.path("holdingAmount")));
-                asset.setPriceUsd(parseBigDecimal(tokenNode.path("priceUsd")));
-                asset.setValueUsd(parseBigDecimal(tokenNode.path("valueUsd")));
-                asset.setTokenId(tokenNode.path("tokenId").asText(null));
 
-                // Save the asset to the database
-                walletAssetsRepository.save(asset);
-            }
-        } catch (Exception e) {
-            System.err.println("Error parsing and saving assets: " + e.getMessage());
+
+        } catch (JsonProcessingException e){
+            throw new RuntimeException(e);
         }
+
+
     }
 
-    private BigDecimal parseBigDecimal(JsonNode node) {
-        try {
-            BigDecimal value = node.isTextual() ? new BigDecimal(node.asText()) : BigDecimal.ZERO;
-            BigDecimal maxAllowedValue = BigDecimal.valueOf(10).pow(20).subtract(BigDecimal.valueOf(1, 18));
-            return value.compareTo(maxAllowedValue) > 0 ? maxAllowedValue : value.setScale(18, RoundingMode.DOWN);
-        } catch (Exception e) {
-            System.err.println("Error parsing BigDecimal: " + node.asText() + " - " + e.getMessage());
-            return BigDecimal.ZERO;
-        }
-    }
+    // first we need to call api and fetch response in the form of a json payload
+
+
+    // use object mapper to parse wallet asset into a dto
+
+
+
+
+
 
 
 

@@ -66,7 +66,7 @@ public class PortfolioService {
             walletAddressRepository.save(wallet);
 
             // Fetch initial assets for the wallet
-            walletAssetsService.fetchAndSaveAssets(wallet);
+//            walletAssetsService.fetchAndSaveAssets(wallet);
         }
         // Save and return the newly created portfolio
 
@@ -102,7 +102,7 @@ public class PortfolioService {
         portfolioRepository.findByIsConnected(true).forEach(portfolio -> {
             WalletAddress walletAddress = portfolio.getWalletAddress();
             if (walletAddress != null) {
-                walletAssetsService.fetchAndSaveAssets(walletAddress);
+//                walletAssetsService.fetchAndSaveAssets(walletAddress);
 
             }
         });

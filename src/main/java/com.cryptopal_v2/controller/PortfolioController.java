@@ -51,7 +51,7 @@ public class PortfolioController {
             Portfolio createdPortfolio = portfolioService.createPortfolio(portfolioRequestDTO, firebaseUID);
 
             if (createdPortfolio.getIsConnected()) {
-                walletAssetsService.fetchAndSaveAssets(createdPortfolio.getWalletAddress());
+                walletAssetsService.fetchWalletAssets(createdPortfolio.getWalletAddress().toString());
             }
             return ResponseEntity.ok("Portfolio created successfully");
         } catch (Exception e) {
