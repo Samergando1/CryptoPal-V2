@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "wallet_address")
@@ -27,8 +29,10 @@ public class WalletAddress {
     @OneToOne(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
 
-    @OneToOne(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
-    private WalletAssets walletAssets;
+    // this is the case each walletAddress will have a list of associated wallet assets
+    @OneToMany(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WalletAssets> walletAssets = new ArrayList<>();
+
 
     // New association with User
     @ManyToOne
@@ -77,11 +81,11 @@ public class WalletAddress {
         this.portfolio = portfolio;
     }
 
-    public WalletAssets getWalletAssets() {
+    public List<WalletAssets> getWalletAssets() {
         return walletAssets;
     }
 
-    public void setWalletAssets(WalletAssets walletAssets) {
+    public void setWalletAssets(List<WalletAssets> walletAssets) {
         this.walletAssets = walletAssets;
     }
 

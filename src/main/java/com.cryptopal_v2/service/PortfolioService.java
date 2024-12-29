@@ -66,7 +66,7 @@ public class PortfolioService {
             walletAddressRepository.save(wallet);
 
             // Fetch initial assets for the wallet
-//            walletAssetsService.fetchAndSaveAssets(wallet);
+            walletAssetsService.fetchWalletAssetsAndSave(wallet.getWalletAddress());
         }
         // Save and return the newly created portfolio
 
