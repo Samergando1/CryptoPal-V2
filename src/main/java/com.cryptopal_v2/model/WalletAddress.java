@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "wallet_address")
@@ -15,31 +17,38 @@ public class WalletAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Unique wallet address identifier
-
     @Column(name = "wallet_address", nullable = false, unique = true)
     private String walletAddress;
 
-    // Balance of the wallet
-
-    @Column(name = "balance", precision = 19, scale = 4)
-    private BigDecimal balance;
-
-    // Last time the balance or other data was fetched
+    @Column(name = "firebase_uid", nullable = false)
+    private String firebaseUid;
 
     @Column(name = "last_fetched")
     private LocalDateTime lastFetched;
 
-    // Establishing a one-to-one relationship with Portfolio
-
     @OneToOne(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
 
-    @OneToOne(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
-    private WalletAssets walletAssets;
+    // this is the case each walletAddress will have a list of associated wallet assets
+    @OneToMany(mappedBy = "walletAddress", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WalletAssets> walletAssets = new ArrayList<>();
+
+
+    // New association with User
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     // Getters and setters
 
+
+    public String getFirebaseUid() {
+        return firebaseUid;
+    }
+
+    public void setFirebaseUid(String firebaseUid) {
+        this.firebaseUid = firebaseUid;
+    }
 
     public Long getId() {
         return id;
@@ -57,21 +66,12 @@ public class WalletAddress {
         this.walletAddress = walletAddress;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
 
     public LocalDateTime getLastFetched() {
         return lastFetched;
     }
 
-    public void setLastFetched(LocalDateTime lastFetched) {
-        this.lastFetched = lastFetched;
-    }
 
     public Portfolio getPortfolio() {
         return portfolio;
@@ -81,13 +81,16 @@ public class WalletAddress {
         this.portfolio = portfolio;
     }
 
-    public WalletAssets getWalletAssets() {
+    public List<WalletAssets> getWalletAssets() {
         return walletAssets;
     }
 
-    public void setWalletAssets(WalletAssets walletAssets) {
+    public void setWalletAssets(List<WalletAssets> walletAssets) {
         this.walletAssets = walletAssets;
     }
 
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

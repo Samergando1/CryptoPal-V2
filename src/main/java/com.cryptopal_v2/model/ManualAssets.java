@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Table(name = "manual_assets")
 public class ManualAssets {
 
+    // this needs work
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
