@@ -1,18 +1,37 @@
 package com.cryptopal_v2.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 public class WalletAssetResponse {
 
+    @JsonProperty("current_usd_price")
     private BigDecimal currentUsdPrice;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("balance")
     private String balance; // Hexadecimal string from JSON
+
+    @JsonProperty("logos")
     private List<Logo> logos;
+
+    @JsonProperty("total_supply")
     private BigDecimal totalSupply;
+
+    @JsonProperty("decimals")
     private Integer decimals;
+
+    @JsonProperty("contract_address")
     private String contractAddress;
+
+    @JsonProperty("symbol")
     private String symbol;
+
+    @JsonProperty("urls")
     private List<Url> urls;
 
     // Nested classes for logos and URLs

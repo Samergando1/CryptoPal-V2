@@ -63,6 +63,7 @@ public class WalletAssetsService {
         WalletAddress existingWalletAddress = walletAddressRepository.findByWalletAddress(walletAddress)
                 .orElseThrow(() -> new RuntimeException("WalletAddress not found for: " + walletAddress));
 
+
         // setting up a json request payload
         String jsonResponse = webClient.get()
             .uri(uriBuilder -> uriBuilder
@@ -84,12 +85,15 @@ public class WalletAssetsService {
                 .block();
 
 
+        System.out.println("This is the json response i got :"  + jsonResponse);
         // map the created json objects to models we can save to our database
 
         try{
             // now JSON data can be put into wrapper dto for further processing
             WalletAssetWrapperDTO walletAssetWrapperDTO = objectMapper.readValue(jsonResponse, WalletAssetWrapperDTO.class);
+
             List<WalletAssetResponse> walletAssetResponses = walletAssetWrapperDTO.getData();
+            System.out.println("Wallet Responses List : " + walletAssetResponses.get(0).getContractAddress());
 
             WalletAssetsMapper mapper = new WalletAssetsMapper();
 
