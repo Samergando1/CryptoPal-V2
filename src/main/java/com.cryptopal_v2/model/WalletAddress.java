@@ -93,4 +93,8 @@ public class WalletAddress {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public void setLastFetched() {
+        this.lastFetched = LocalDateTime.now();
+    }
 }

@@ -25,16 +25,16 @@ public class WalletAssets {
     @Column(name = "token_type")
     private String tokenType;
 
-    @Column(name = "holding_amount", precision = 38, scale = 18, nullable = false)
+    @Column(name = "holding_amount", precision = 50, scale = 18, nullable = false)
     private BigDecimal holdingAmount;
 
-    @Column(name = "price_usd", precision = 38, scale = 18)
+    @Column(name = "price_usd", precision = 50, scale = 18)
     private BigDecimal priceUsd;
 
-    @Column(name = "value_usd", precision = 38, scale = 18)
+    @Column(name = "value_usd", precision = 50, scale = 18)
     private BigDecimal valueUsd;
 
-    @Column(name = "total_supply", precision = 38, scale = 18)
+    @Column(name = "total_supply", precision = 50, scale = 18)
     private BigDecimal totalSupply;
 
     @Column(name = "decimals", nullable = false)

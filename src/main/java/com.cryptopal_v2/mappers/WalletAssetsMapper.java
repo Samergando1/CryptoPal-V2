@@ -9,7 +9,16 @@ import java.math.BigInteger;
 
 public class WalletAssetsMapper {
 
-    // simple class to map the deserialized tokens in the form of a json array into walletAssetModels
+    // Define maximum allowed value based on database precision and scale
+    private static final BigDecimal MAX_ALLOWED_VALUE = new BigDecimal("99999999999999999999999999999999.999999999999999999");
+
+    // Helper method to sanitize BigDecimal values
+    private BigDecimal sanitizeValue(BigDecimal value) {
+        if (value == null) return BigDecimal.ZERO; // Default null values to zero
+        return value.compareTo(MAX_ALLOWED_VALUE) > 0 ? MAX_ALLOWED_VALUE : value;
+    }
+
+    // Method to map the deserialized tokens to WalletAssets
     public WalletAssets mapToEntity(WalletAssetResponse response, WalletAddress walletAddress) {
 
         // Initialize WalletAssets entity
@@ -21,7 +30,7 @@ public class WalletAssetsMapper {
                 : "UNKNOWN");
 
         // Set token contract address
-        System.out.println(response.getContractAddress());          // we are not getting the contract address
+        System.out.println(response.getContractAddress());
         walletAsset.setTokenContractAddress(response.getContractAddress());
 
         // Set decimals (default to 0 if null)
@@ -30,10 +39,9 @@ public class WalletAssetsMapper {
 
         // Convert balance from hex to BigDecimal
         try {
-            // Decode hex balance using BigInteger
             BigDecimal holdingAmount = new BigDecimal(new BigInteger(response.getBalance().substring(2), 16))
-                    .divide(BigDecimal.TEN.pow(decimals), BigDecimal.ROUND_DOWN); // Avoid division errors
-            walletAsset.setHoldingAmount(holdingAmount);
+                    .divide(BigDecimal.TEN.pow(decimals), BigDecimal.ROUND_DOWN);
+            walletAsset.setHoldingAmount(sanitizeValue(holdingAmount)); // Sanitize holding amount
         } catch (Exception e) {
             System.err.println("Error parsing balance for contract: " + response.getContractAddress());
             e.printStackTrace();
@@ -42,18 +50,20 @@ public class WalletAssetsMapper {
 
         // Set current USD price (fallback to 0 if null)
         BigDecimal priceUsd = response.getCurrentUsdPrice() != null ? response.getCurrentUsdPrice() : BigDecimal.ZERO;
-        walletAsset.setPriceUsd(priceUsd);
+        walletAsset.setPriceUsd(sanitizeValue(priceUsd)); // Sanitize price USD
 
         // Set total supply (fallback to null if not available)
-        walletAsset.setTotalSupply(response.getTotalSupply() != null
-                ? response.getTotalSupply()
-                : null);
-
+        if (response.getTotalSupply() != null) {
+            walletAsset.setTotalSupply(sanitizeValue(response.getTotalSupply())); // Sanitize total supply
+        } else {
+            walletAsset.setTotalSupply(null);
+        }
 
         // Calculate valueUsd if priceUsd is available
-        walletAsset.setValueUsd(priceUsd.compareTo(BigDecimal.ZERO) > 0
+        BigDecimal valueUsd = priceUsd.compareTo(BigDecimal.ZERO) > 0
                 ? walletAsset.getHoldingAmount().multiply(priceUsd)
-                : BigDecimal.ZERO);
+                : BigDecimal.ZERO;
+        walletAsset.setValueUsd(sanitizeValue(valueUsd)); // Sanitize value USD
 
         // Extract logo URI (fallback to null if not available)
         walletAsset.setLogoUri(response.getLogos() != null && !response.getLogos().isEmpty()
@@ -67,10 +77,10 @@ public class WalletAssetsMapper {
 
         // Set the wallet address relationship
         walletAsset.setWalletAddress(walletAddress);
+        System.out.println("WalletAddress ID: " + walletAddress.getId());
+        System.out.println("WalletAddress Name: " + walletAddress.getWalletAddress());
+
 
         return walletAsset;
     }
-
-
-
 }
