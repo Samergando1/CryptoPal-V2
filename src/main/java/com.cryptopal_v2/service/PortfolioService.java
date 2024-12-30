@@ -46,7 +46,6 @@ public class PortfolioService {
         }
         User user = userOpt.get();      // getting the user object stored in the database
 
-        // creates a portfolio model to represent the logged in user
 
         // Create a portfolio model to represent the logged-in user
         Portfolio portfolio = new Portfolio();
@@ -57,7 +56,7 @@ public class PortfolioService {
 
         if (portfolioRequestDTO.isConnected() && portfolioRequestDTO.walletAddress() != null) {
             WalletAddress wallet = new WalletAddress();
-            wallet.setWalletAddress(portfolioRequestDTO.walletAddress().getWalletAddress());
+            wallet.setWalletAddress(portfolioRequestDTO.walletAddress());
             wallet.setFirebaseUid(firebaseUid); // Associate the Firebase UID
             wallet.setUser(user); // Set the user here
             portfolio.setWalletAddress(wallet); // Associate the wallet with the portfolio

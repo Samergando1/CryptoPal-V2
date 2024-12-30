@@ -36,7 +36,7 @@ public class AuthController{
     }
 
     /**
-     * This will allow users to login using their email address
+     * This will allow users to login using their email address, this will take a some firebase ID token
      * @param  credentials
      * @return
      */
@@ -65,6 +65,8 @@ public class AuthController{
 
     /**
      * Sign up a new user with email, password, and displayName.
+     * After using this endpoint the frontend should redirect back to the login page.
+     * Password handling etc. will be implemented in the frontend
      * @param payload
      * @return
      */
