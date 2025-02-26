@@ -1,43 +1,16 @@
-# Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
-# IDE files
-.idea/
-*.iws
-*.iml
-*.ipr
-.vscode/
-
-# Compiled files
-*.class
-*.jar
-*.war
-
-# Logs
-*.log
-
-# Environment variables
-.env
-
-# Node/React
-node_modules/
-/frontend/node_modules/
-/frontend/build/
-/frontend/.env
-/frontend/.env.local
-/frontend/npm-debug.log*
-/frontend/yarn-debug.log*
-/frontend/yarn-error.log*
-.DS_Store
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+*.iws
+*.iml
+*.ipr
 
 ### Eclipse ###
 .apt_generated
@@ -63,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+## ignore the .env
+.env
