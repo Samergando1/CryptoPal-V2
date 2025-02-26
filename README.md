@@ -1,20 +1,47 @@
-# CryptoPal-V2
-A refined version of the original CryptoPal prototype with full functionality. 
+# 🚀 CryptoPal-V2
+A refined cryptocurrency portfolio tracker focusing on essential portfolio management features.
 
-Implements the following functionality: 
+## 📊 About The Project
+CryptoPal is primarily a cryptocurrency portfolio tracking system, designed to help users monitor and manage their crypto investments effectively. While we have exciting plans for future features like AI advisors and advanced analytics, our current focus is on building a robust and reliable portfolio management core.
 
-Project Timeline --> 2 months
+## 🎯 Current Core Functionality
+- 📈 Real-time portfolio tracking
+- 💰 Asset management
+- 📊 Basic performance metrics
+- 👤 User authentication
+- 🎨 Clean, intuitive interface
 
---Backend--
-  -> User OAuth login and storage in a relational database 
-  -> Portfolio Tracking Features 
-  -> Portfolio Insight Features 
-  -> Websocket connection to OpenAI API inorder to create user Portfolio Advisor called 'My CryptoPal' (After Full Stack Development)
+## ⏱️ Development Timeline
+Phase 1 (Current Focus) - 2 Months
+- Essential portfolio tracking features
+- User authentication
+- Basic frontend interface
 
---Frontend--
-  -> React Frontend with a modern Coinbase Webpage
+## 🔮 Future Enhancements (Post-MVP)
+*Note: These features are planned for future releases and are not part of the current development phase*
+- AI Portfolio Advisor via OpenAI API
+- Advanced analytics dashboard
+- Portfolio rebalancing suggestions
+- Mobile app version
+- WebSocket real-time updates
 
---DevOps--
-  -> Deploy the program on Docker
-  -> What ever allows users to make use of it. 
-    
+## 🛠️ Tech Stack
+### Current Implementation
+- ⚛️ React & TypeScript
+- 🎨 Material UI
+- 🔐 Basic Authentication
+- 📊 SQL Database
+
+### Future Stack Additions
+- 🤖 OpenAI API Integration
+- 🐳 Docker Deployment
+- 📱 Mobile Framework
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+
+### Installation
+1. Clone the repository
