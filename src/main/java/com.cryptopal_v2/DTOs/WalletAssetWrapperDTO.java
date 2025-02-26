@@ -1,12 +1,15 @@
 package com.cryptopal_v2.DTOs;
 
 import com.cryptopal_v2.responses.WalletAssetResponse;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 public class WalletAssetWrapperDTO {
 
     // used to preserve other non data fields after parsing a json response
+    @JsonProperty("next_page")
+
     private Integer nextPage; // Corresponds to "next_page"
     private String message;
     private List<WalletAssetResponse> data;

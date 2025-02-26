@@ -17,7 +17,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class WalletAssetsService {
@@ -63,6 +65,7 @@ public class WalletAssetsService {
         WalletAddress existingWalletAddress = walletAddressRepository.findByWalletAddress(walletAddress)
                 .orElseThrow(() -> new RuntimeException("WalletAddress not found for: " + walletAddress));
 
+
         // setting up a json request payload
         String jsonResponse = webClient.get()
             .uri(uriBuilder -> uriBuilder
@@ -84,38 +87,36 @@ public class WalletAssetsService {
                 .block();
 
 
+        System.out.println("This is the json response i got :"  + jsonResponse);
         // map the created json objects to models we can save to our database
+
+        Set<WalletAssets> uniqueAssets = new HashSet<>();
+
 
         try{
             // now JSON data can be put into wrapper dto for further processing
             WalletAssetWrapperDTO walletAssetWrapperDTO = objectMapper.readValue(jsonResponse, WalletAssetWrapperDTO.class);
+
             List<WalletAssetResponse> walletAssetResponses = walletAssetWrapperDTO.getData();
 
             WalletAssetsMapper mapper = new WalletAssetsMapper();
 
+            // Delete existing wallet assets for the given wallet address
+            walletAssetsRepository.deleteByWalletAddressId(existingWalletAddress.getId());
 
-            List<WalletAssets> walletAssetsList = new ArrayList<>();
-            for( WalletAssetResponse walletResponse : walletAssetResponses){
+            for (WalletAssetResponse walletResponse : walletAssetResponses) {
                 WalletAssets walletAsset = mapper.mapToEntity(walletResponse, existingWalletAddress);
-                walletAssetsList.add(walletAsset);
+                uniqueAssets.add(walletAsset);
             }
-            walletAssetsRepository.saveAll(walletAssetsList);
 
         } catch (JsonProcessingException e){
             throw new RuntimeException(e);
         }
 
+        walletAssetsRepository.saveAll(uniqueAssets);
+
+
 
     }
-
-
-
-
-
-
-
-
-
-
 
 }

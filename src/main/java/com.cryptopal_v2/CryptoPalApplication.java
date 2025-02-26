@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +20,8 @@ import java.util.Map;
 @SpringBootApplication( exclude = SecurityAutoConfiguration.class)
 public class CryptoPalApplication implements CommandLineRunner {
 
-    // Replace this with your Firebase Web API Key from the Firebase Console
-    private static final String FIREBASE_API_KEY = "AIzaSyCbBX9lwg0x2-kbf6ga_39-q8UeodZ5D38\n";
+    @Value("${firebase.api.key}")
+    private String firebaseApiKey;
 
     public static void main(String[] args) {
         SpringApplication.run(CryptoPalApplication.class, args);
@@ -70,7 +71,7 @@ public class CryptoPalApplication implements CommandLineRunner {
      * @return The ID token.
      */
     private String exchangeCustomTokenForIdToken(String customToken) {
-        String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=" + FIREBASE_API_KEY;
+        String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=" + firebaseApiKey;
         RestTemplate restTemplate = new RestTemplate();
 
         // Set headers
