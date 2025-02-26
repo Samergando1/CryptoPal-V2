@@ -1,15 +1,1 @@
-# Backend
-target/
-.mvn/
-*.iml
-.idea/
-
-# Frontend
-frontend/node_modules/
-frontend/build/
-frontend/.env
-frontend/.env.local
-
-# General
-.DS_Store
-.env
+node_modules

@@ -7,19 +7,35 @@ import {
   TableCell, 
   TableHead, 
   TableRow,
-  Box 
+  Box,
+  Alert 
 } from '@mui/material';
 
 export const PortfolioOverview = () => {
   const [portfolio, setPortfolio] = React.useState<any>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     fetch('http://localhost:8080/api/portfolio/overview')
-      .then(res => res.json())
-      .then(data => setPortfolio(data));
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch portfolio data');
+        return res.json();
+      })
+      .then(data => setPortfolio(data))
+      .catch(err => setError(err.message));
   }, []);
 
-  if (!portfolio) return <div>Loading...</div>;
+  if (error) return (
+    <Alert severity="error" sx={{ m: 2 }}>
+      {error} - Please ensure the backend server is running.
+    </Alert>
+  );
+
+  if (!portfolio) return (
+    <Box sx={{ p: 3 }}>
+      <Typography>Loading portfolio data...</Typography>
+    </Box>
+  );
 
   return (
     <Box sx={{ p: 3 }}>

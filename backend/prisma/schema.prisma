@@ -1,0 +1,42 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         String      @id @default(uuid())
+  email      String      @unique
+  firebaseId String      @unique
+  portfolios Portfolio[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Portfolio {
+  id         String   @id @default(uuid())
+  name       String
+  totalValue Float
+  change24h  Float
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  assets     Asset[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Asset {
+  id          String    @id @default(uuid())
+  symbol      String
+  name        String
+  quantity    Float
+  price       Float
+  value       Float
+  change24h   Float
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  lastUpdated DateTime  @updatedAt
+} 
