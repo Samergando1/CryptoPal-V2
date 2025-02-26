@@ -45,3 +45,38 @@ Phase 1 (Current Focus) - 2 Months
 
 ### Installation
 1. Clone the repository
+2. Navigate to the frontend directory
+3. Install dependencies
+4. Start the development server
+
+5. 
+## 🌐 Current Features
+1. Portfolio Overview
+   - Total portfolio value
+   - Individual asset holdings
+   - Basic performance metrics
+
+2. Asset Management
+   - Add/remove assets
+   - Update holdings
+   - Track purchase prices
+
+3. User Interface
+   - Clean, modern design
+   - Responsive layout
+   - Dark/Light mode
+
+## 🤝 Contributing
+* Will be open soon as the base mvp is working.
+
+Project Link: [https://github.com/Samergando1/CryptoPal-V2](https://github.com/Samergando1/CryptoPal-V2)
+
+## 🙏 Acknowledgments
+* [React Documentation](https://reactjs.org/)
+* [Material UI](https://mui.com/)
+* [CoinGecko API](https://www.coingecko.com/en/api)
+
+---
+⭐️ Star this project if you find it useful!
+
+*Note: This project is currently in active development, focusing on establishing core portfolio tracking functionality. Additional features mentioned in the future enhancements section will be implemented in later phases.*
